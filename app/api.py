@@ -7,6 +7,9 @@ from settings import env
 tokin_service = JWT.tokinService(env)
 
 
+# resp.set_cookie('sessionID', '', expires=0)   #Сбросить куки
+
+
 
 @app.route('/api/v0.1/login', methods=['POST', "GET"])
 def api_jwt_get():
