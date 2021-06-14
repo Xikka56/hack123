@@ -1,9 +1,14 @@
-from app import app
+from app import *
 
 from service import JWT
 
+from settings import env
+tokin_service = JWT.tokinService(env)
+
+
+
 @app.route('/')
-@app.route('/index')
 def index():
-    JWT.q()
-    return "Hello, World!"
+    # asd
+    # jwts = tokin_service.generateTokins({"dq":'qwe'})
+    return render_template('dq.html')
