@@ -13,7 +13,6 @@ tokin_service = JWT.tokinService(env)
 
 @app.route('/api/v0.1/login', methods=['POST', "GET"])
 def api_jwt_get():
-    
     if request.cookies.get('refreshToken'):
         abort(405)
     if not request.cookies.get('refreshToken'):
