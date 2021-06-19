@@ -89,26 +89,135 @@ db = {
 }
 
 
-@app.route('/api/v0.1/get_slides', methods=['POST', "GET"])
+@app.route('/api/v0.1/get_slides', methods=['POST'])
 def get_slides():
     # asd
     if(request.data):
         data = json.loads(request.data.decode())
         print("data", data)
-        if(data["count"] != 0):
-            m_end = []
-            get_by_type = ""
-            if(data["type"]):
-                print(data["type"])
-                get_by_type = f"""WHERE`type` = '{data["type"]}' """
-
-            for el in range(data['count']):
-                m_end.append(
-                    DB.GET(f"""SELECT * FROM `slides` {get_by_type}""")[0])
-        # jwts = tokin_service.generateTokins({"dq":'qwe'})
-        return {
-            'mass_data': m_end
+        # if(data["count"] != 0):
+        #     print(data["type"]["types"])
+        m_end = []
+        get_by_type = ""
+        # if(data["type"]["types"]):
+        print(data["type"]["types"])
+        req_data = {
+            "question": []
         }
+        if data["type"]["types"] != []:
+            for i in data["type"]["types"]:
+                for ii in range(0, data['count']):
+                    type_ = DB.GET(f"""SELECT * FROM `filters` \
+                        WHERE `title` = '{i}'""")[0][0]
+                    print("type_", type_)
+                    get_by_type = f"""WHERE `id_type` = {type_}"""
+                    print(get_by_type)
+                    zap = DB.GET(
+                        f"""SELECT DISTINCT * FROM `slides` {get_by_type}""")
+                    if (zap in m_end):
+                        break
+                    print(zap)
+                    for el in zap:
+                        tt = {
+                            "title": el[1],
+                            "description": el[2],
+                            "data": el[3],
+                            "type": el[4],
+                            "poz1": el[5],
+                            "poz2": el[6],
+                            "age_start": el[7],
+                            "age_end": el[8],
+                        }
+                        req_data['question'].append(tt)
+                print(req_data)
+        else:
+            print(data["count"])
+            zap1 = DB.GET(
+                f"""SELECT * FROM `slides` ORDER BY RAND() LIMIT {data["count"]}""")
+            print(zap1)
+            for el in zap1:
+                tt = {
+                    "title": el[1],
+                    "description": el[2],
+                    "data": el[3],
+                    "type": el[4],
+                    "poz1": el[5],
+                    "poz2": el[6],
+                    "age_start": el[7],
+                    "age_end": el[8],
+                }
+            req_data['question'].append(tt)
+        return req_data
+    return('false')
+
+# "#music", "#sport"
+
+
+@app.route('/api/v0.1/get_marketing', methods=['POST'])
+def get_marketing():
+    # asd
+    if(request.data):
+        data = json.loads(request.data.decode())
+        print("data", data)
+        # if(data["count"] != 0):
+        #     print(data["type"]["types"])
+        m_end = []
+        get_by_type = ""
+        # if(data["type"]["types"]):
+        print(data["type"]["types"])
+        req_data = {
+            "question": []
+        }
+        if data["type"]["types"] != []:
+            for i in data["type"]["types"]:
+                print(data["count"])
+                type_ = DB.GET(f"""SELECT * FROM `filters` \
+                        WHERE `title` = '{i}'""")[0][0]
+                print("type_", type_)
+                get_by_type = f"""WHERE `id_type` = {type_}"""
+                print(get_by_type)
+                zap1 = DB.GET(
+                    f"""SELECT * FROM `marketing` {get_by_type} \
+                        ORDER BY RAND() LIMIT {data["count"]}""")
+                print(zap1)
+                for el in zap1:
+                    tt = {
+                        "title": el[1],
+                        "description": el[2],
+                        "data": el[3],
+                        "id_type": el[4],
+                        "poz1": el[5],
+                        "poz2": el[6],
+                        "age_start": el[7],
+                        "age_end": el[8],
+                    }
+                req_data['question'].append(tt)
+        return req_data
+    return('false')
+
+
+@app.route('/api/v0.1/get_filters', methods=['POST'])
+def get_filters():
+    # asd
+    if(request.data):
+        data = json.loads(request.data.decode())
+        print("data", data)
+        req_data = {
+            "title": []
+        }
+        zap = DB.GET(
+            f"""SELECT DISTINCT * FROM `filters`""")
+        print(zap)
+        for el in zap:
+            # req_data["title"].append(el)
+            print(el)
+            tt = {
+                "id": el[0],
+                "title": el[1]
+            }
+            req_data['title'].append(tt)
+        print(req_data)
+        return req_data
     return('false')
 
 
